@@ -1,11 +1,10 @@
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
-name: Deploy Jekyll with GitHub Pages dependencies preinstalled
+name: Deploy Jekyll / GitHub Pages
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["trunk"]
-  pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -47,6 +46,7 @@ jobs:
 
   # Deployment job
   deploy:
+    if: github.ref == 'refs/heads/trunk' && github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -54,12 +54,5 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages (on trunk)
-        if: github.ref == 'refs/heads/trunk' && github.event_name != 'pull_request'
         id: deployment
         uses: actions/deploy-pages@v2
-      - name: Deploy to GitHub Pages (PR)
-        if: github.event_name == 'pull_request'
-        id: deployment-pr
-        uses: actions/deploy-pages@v2
-        with:
-          preview: true
